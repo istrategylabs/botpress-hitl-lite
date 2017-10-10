@@ -4,9 +4,6 @@ import _ from 'lodash'
 import path from 'path'
 import fs from 'fs'
 
-// TODO: Cleanup old sessions
-// TODO: If messages count > X, delete some
-
 let db = null
 let config = null
 
