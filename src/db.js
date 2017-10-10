@@ -43,7 +43,7 @@ function createUserSession(event) {
     full_name = event.user.first_name + ' ' + event.user.last_name
   }
 
-  const session = { 
+  const session = {
     platform: event.platform,
     userId: event.user.id,
     user_image_url: profileUrl,
@@ -56,7 +56,7 @@ function createUserSession(event) {
 
   return knex('hitl_sessions')
   .insert(session)
-  .then(results => { 
+  .then(results => {
     session.id = results[0]
     session.is_new_session = true
   })
@@ -97,33 +97,6 @@ function toPlainObject(object) {
   // trims SQL queries from objects
   return _.mapValues(object, v => {
     return v.sql ? v.sql : v
-  })
-}
-
-function appendMessageToSession(event, sessionId, direction) {
-
-  let message = {
-    session_id: sessionId,
-    type: event.type,
-    text: event.text,
-    raw_message: event.raw,
-    direction: direction,
-    ts: helpers(knex).date.now()
-  }
-
-  const update = { last_event_on: helpers(knex).date.now() }
-
-  if (direction === 'in') {
-    update.last_heard_on = helpers(knex).date.now()
-  }
-
-  return knex('hitl_messages')
-  .insert(message)
-  .then(() => {
-    return knex('hitl_sessions')
-    .where({ id: sessionId })
-    .update(update)
-    .then(() => toPlainObject(message))
   })
 }
 
@@ -201,7 +174,6 @@ module.exports = k => {
     initialize,
     getUserSession,
     setSessionPaused,
-    appendMessageToSession,
     getAllSessions,
     getSessionData,
     getSession,

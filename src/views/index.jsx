@@ -26,20 +26,17 @@ export default class HitlModule extends React.Component {
       onlyPaused: false
     }
 
-    this.updateSessionMessage = ::this.updateSessionMessage
     this.updateSession = ::this.updateSession
     this.refreshSessions = ::this.refreshSessions
   }
 
   componentDidMount() {
-    this.props.bp.events.on('hitl.message', this.updateSessionMessage)
     this.props.bp.events.on('hitl.session', this.refreshSessions)
     this.props.bp.events.on('hitl.session.changed', this.updateSession)
     this.refreshSessions()
   }
 
   componentWillUnmount() {
-    this.props.bp.events.off('hitl.message', this.updateSessionMessage)
     this.props.bp.events.off('hitl.session', this.refreshSessions)
     this.props.bp.events.off('hitl.session.changed', this.updateSession)
   }
@@ -73,33 +70,6 @@ export default class HitlModule extends React.Component {
     }
   }
 
-  updateSessionMessage(message) {
-    if (!this.state.sessions) {
-      return
-    }
-
-    const session = _.find(this.state.sessions.sessions, { id: message.session_id })
-
-    if (!session) {
-      return
-    }
-
-    const newSession = Object.assign({}, session, { 
-      text: message.text,
-      direction: message.direction,
-      type: message.type,
-      last_event_on: new Date(),
-      last_heard_on: message.direction === 'in' ? new Date() : session.last_heard_on
-    })
-
-    const newSessions = {
-      total: this.state.sessions.total,
-      sessions: [newSession, ..._.without(this.state.sessions.sessions, session)]
-    }
-
-    this.setState({ sessions:  newSessions })
-  }
-
   getAxios() {
     return this.props.bp.axios
   }
@@ -126,11 +96,6 @@ export default class HitlModule extends React.Component {
     this.setState({ currentSession: session })
   }
 
-  sendMessage(message) {
-    const sessionId = this.state.currentSession.id
-    this.getAxios().post(`/api/botpress-hitl/sessions/${sessionId}/message`, { message })
-  }
-
   renderLoading() {
     return <h1>Loading...</h1>
   }
@@ -147,10 +112,10 @@ export default class HitlModule extends React.Component {
         <Grid>
           <Row>
             <Col sm={3} className={style.column} lgOffset={1}>
-              <Sidebar 
-                sessions={this.state.sessions} 
-                setSession={::this.setSession} 
-                currentSession={currentSessionId} 
+              <Sidebar
+                sessions={this.state.sessions}
+                setSession={::this.setSession}
+                currentSession={currentSessionId}
                 filter={this.state.onlyPaused}
                 toggleOnlyPaused={::this.toggleOnlyPaused} />
             </Col>
@@ -162,7 +127,6 @@ export default class HitlModule extends React.Component {
               </Row>
               <Row>
                 <Col sm={12}>
-                  <Typing sendMessage={::this.sendMessage}/>
                 </Col>
               </Row>
             </Col>
