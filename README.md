@@ -1,4 +1,4 @@
-# botpress-hitl
+# botpress-hitl-lite
 
 Lite HITL (Human In The Loop) module for Botpress. This module has been built to easily pause and unpause your bot's conversation when it's needed. By using this module, you can stop automatic responses of your bot. This is *not* the official HITL module for Botpress. Functionality is limited to pausing and unpausing your bot's conversation.
 
