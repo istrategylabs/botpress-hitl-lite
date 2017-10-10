@@ -21,17 +21,6 @@ function initialize() {
     table.boolean('paused')
     table.string('paused_trigger')
   })
-  .then(function() {
-    return helpers(knex).createTableIfNotExists('hitl_messages', function (table) {
-      table.increments('id').primary()
-      table.integer('session_id').references('hitl_sessions.id').onDelete('CASCADE')
-      table.string('type')
-      table.string('text')
-      table.jsonb('raw_message')
-      table.enu('direction', ['in', 'out'])
-      table.timestamp('ts')
-    })
-  })
 }
 
 function createUserSession(event) {
@@ -137,34 +126,18 @@ function getAllSessions(onlyPaused) {
   let condition = ''
 
   if (onlyPaused === true) {
-    condition = 'hitl_sessions.paused = ' + helpers(knex).bool.true()
+    condition = 'paused = ' + helpers(knex).bool.true()
   }
 
-  return knex.select('*').from(function() {
-    this.select([knex.raw('max(id) as mId'), 'session_id', knex.raw('count(*) as count')])
-    .from('hitl_messages')
-    .groupBy('session_id')
-    .as('q1')
-  })
-  .join('hitl_messages', knex.raw('q1.mId'), 'hitl_messages.id')
-  .join('hitl_sessions', knex.raw('q1.session_id'), 'hitl_sessions.id')
+  return knex.select('*')
+  .from('hitl_sessions')
   .whereRaw(condition)
-  .orderBy('hitl_sessions.last_event_on', 'desc')
+  .orderBy('last_event_on', 'desc')
   .limit(100)
   .then(results => ({
     total: 0,
     sessions: results
   }))
-}
-
-function getSessionData(sessionId) {
-  return knex('hitl_sessions')
-  .where({ 'session_id': sessionId })
-  .join('hitl_messages', 'hitl_messages.session_id', 'hitl_sessions.id')
-  .orderBy('hitl_messages.id', 'desc')
-  .limit(100)
-  .select('*')
-  .then(messages => _.orderBy(messages, ['id'], ['asc']))
 }
 
 module.exports = k => {
@@ -175,7 +148,6 @@ module.exports = k => {
     getUserSession,
     setSessionPaused,
     getAllSessions,
-    getSessionData,
     getSession,
     isSessionPaused
   }
