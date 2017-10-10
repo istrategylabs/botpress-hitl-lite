@@ -32,6 +32,7 @@
   "author": "Botpress",
   "license": "AGPL-3.0",
   "devDependencies": {
+    "botpress": ">= 0.1",
     "babel-core": "^6.18.2",
     "babel-loader": "^6.2.7",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
@@ -65,8 +66,5 @@
     "botpress-version-manager": "^1.0.2",
     "lodash": "^4.17.4",
     "moment": "^2.17.1"
-  },
-  "peerDependencies": {
-    "botpress": ">= 0.1"
   }
 }
