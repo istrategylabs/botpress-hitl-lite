@@ -82,8 +82,6 @@ export default class Conversation extends React.Component {
         <div className={style.header}>
           {this.props.data ? ::this.renderHeader() : null}
         </div>
-        <div className={style.messages} style={dynamicHeightStyleMessageDiv}>
-        </div>
       </div>
     )
   }
