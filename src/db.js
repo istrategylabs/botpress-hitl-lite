@@ -1,6 +1,3 @@
-import Promise from 'bluebird'
-import moment from 'moment'
-import _ from 'lodash'
 import { DatabaseHelpers as helpers } from 'botpress'
 
 var knex = null
@@ -25,11 +22,11 @@ function initialize () {
 
 function createUserSession (event) {
   let profileUrl = null
-  let full_name = '#' + Math.random().toString().substr(2)
+  let fullName = '#' + Math.random().toString().substr(2)
 
   if (event.user && event.user.first_name && event.user.last_name) {
     profileUrl = event.user.profile_pic || event.user.picture_url
-    full_name = event.user.first_name + ' ' + event.user.last_name
+    fullName = event.user.first_name + ' ' + event.user.last_name
   }
 
   const session = {
@@ -39,7 +36,7 @@ function createUserSession (event) {
     last_event_on: helpers(knex).date.now(),
     last_heard_on: helpers(knex).date.now(),
     paused: 0,
-    full_name: full_name,
+    full_name: fullName,
     paused_trigger: null
   }
 
@@ -50,7 +47,7 @@ function createUserSession (event) {
     session.is_new_session = true
   })
   .then(() => knex('hitl_sessions').where({ id: session.id }).then().get(0))
-  .then(db_session => Object.assign({}, session, db_session))
+  .then(dbSession => Object.assign({}, session, dbSession))
 }
 
 function getUserSession (event) {
@@ -79,13 +76,6 @@ function getSession (sessionId) {
     } else {
       return users[0]
     }
-  })
-}
-
-function toPlainObject (object) {
-  // trims SQL queries from objects
-  return _.mapValues(object, v => {
-    return v.sql ? v.sql : v
   })
 }
 

@@ -1,8 +1,6 @@
 import checkVersion from 'botpress-version-manager'
 import DB from './db'
 import _ from 'lodash'
-import path from 'path'
-import fs from 'fs'
 
 let db = null
 let config = null
@@ -73,7 +71,7 @@ module.exports = {
     config = await configurator.loadAll()
 
     bp.db.get()
-    .then(knex => db = DB(knex))
+    .then(knex => (db = DB(knex)))
     .then(() => db.initialize())
   },
 
