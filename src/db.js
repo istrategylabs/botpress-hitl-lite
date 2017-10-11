@@ -7,7 +7,7 @@ function initialize () {
     throw new Error('you must initialize the database before')
   }
 
-  return helpers(knex).createTableIfNotExists('hitl_sessions', function (table) {
+  return helpers(knex).createTableIfNotExists('hitl-lite_sessions', function (table) {
     table.increments('id').primary()
     table.string('platform')
     table.string('userId')
@@ -40,19 +40,19 @@ function createUserSession (event) {
     paused_trigger: null
   }
 
-  return knex('hitl_sessions')
+  return knex('hitl-lite_sessions')
   .insert(session)
   .then(results => {
     session.id = results[0]
     session.is_new_session = true
   })
-  .then(() => knex('hitl_sessions').where({ id: session.id }).then().get(0))
+  .then(() => knex('hitl-lite_sessions').where({ id: session.id }).then().get(0))
   .then(dbSession => Object.assign({}, session, dbSession))
 }
 
 function getUserSession (event) {
   const userId = (event.user && event.user.id) || event.raw.to
-  return knex('hitl_sessions')
+  return knex('hitl-lite_sessions')
   .where({ platform: event.platform, userId: userId })
   .select('*')
   .limit(1)
@@ -66,7 +66,7 @@ function getUserSession (event) {
 }
 
 function getSession (sessionId) {
-  return knex('hitl_sessions')
+  return knex('hitl-lite_sessions')
   .where({ id: sessionId })
   .select('*')
   .limit(1)
@@ -81,16 +81,16 @@ function getSession (sessionId) {
 
 function setSessionPaused (paused, platform, userId, trigger, sessionId = null) {
   if (sessionId) {
-    return knex('hitl_sessions')
+    return knex('hitl-lite_sessions')
     .where({ id: sessionId })
     .update({ paused: paused ? 1 : 0, paused_trigger: trigger })
     .then(() => parseInt(sessionId))
   } else {
-    return knex('hitl_sessions')
+    return knex('hitl-lite_sessions')
     .where({ userId, platform })
     .update({ paused: paused ? 1 : 0, paused_trigger: trigger })
     .then(() => {
-      return knex('hitl_sessions')
+      return knex('hitl-lite_sessions')
       .where({ userId, platform })
       .select('id')
     })
@@ -102,11 +102,11 @@ function isSessionPaused (platform, userId, sessionId = null) {
   const toBool = s => helpers(knex).bool.parse(s)
 
   if (sessionId) {
-    return knex('hitl_sessions')
+    return knex('hitl-lite_sessions')
     .where({ id: sessionId })
     .select('paused').then().get(0).then(s => s && toBool(s.paused))
   } else {
-    return knex('hitl_sessions')
+    return knex('hitl-lite_sessions')
     .where({ userId, platform })
     .select('paused').then().get(0).then(s => s && toBool(s.paused))
   }
@@ -120,7 +120,7 @@ function getAllSessions (onlyPaused) {
   }
 
   return knex.select('*')
-  .from('hitl_sessions')
+  .from('hitl-lite_sessions')
   .whereRaw(condition)
   .orderBy('last_event_on', 'desc')
   .limit(100)

@@ -13,7 +13,7 @@ import style from './style.scss'
 
 import _ from 'lodash'
 
-const api = route => '/api/botpress-hitl/' + route
+const api = route => '/api/botpress-hitl-lite/' + route
 
 export default class HitlModule extends React.Component {
 
@@ -31,14 +31,14 @@ export default class HitlModule extends React.Component {
   }
 
   componentDidMount() {
-    this.props.bp.events.on('hitl.session', this.refreshSessions)
-    this.props.bp.events.on('hitl.session.changed', this.updateSession)
+    this.props.bp.events.on('hitl-lite.session', this.refreshSessions)
+    this.props.bp.events.on('hitl-lite.session.changed', this.updateSession)
     this.refreshSessions()
   }
 
   componentWillUnmount() {
-    this.props.bp.events.off('hitl.session', this.refreshSessions)
-    this.props.bp.events.off('hitl.session.changed', this.updateSession)
+    this.props.bp.events.off('hitl-lite.session', this.refreshSessions)
+    this.props.bp.events.off('hitl-lite.session.changed', this.updateSession)
   }
 
   refreshSessions(session) {
@@ -75,7 +75,7 @@ export default class HitlModule extends React.Component {
   }
 
   fetchAllSessions() {
-    return this.getAxios().get('/api/botpress-hitl/sessions?onlyPaused=' + this.state.onlyPaused)
+    return this.getAxios().get('/api/botpress-hitl-lite/sessions?onlyPaused=' + this.state.onlyPaused)
     .then((res) => {
       this.setState({
         loading: false,

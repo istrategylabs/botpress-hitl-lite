@@ -1,16 +1,19 @@
 {
-  "name": "botpress-hitl",
+  "name": "botpress-hitl-lite",
   "version": "1.0.9",
-  "description": "Official HITL (Human In The Loop) module for Botpress",
+  "description": "HITL (Human In The Loop) module for Botpress that doesn't save messages",
   "main": "bin/node.bundle.js",
   "botpress": {
-    "menuText": "HITL",
+    "menuText": "HITL-Lite",
     "menuIcon": "feedback",
     "webBundle": "bin/web.bundle.js"
   },
   "keywords": [
     "hitl",
     "human in the loop",
+    "botpress",
+    "hitl-lite",
+    "hitl lite",
     "botpress"
   ],
   "version-manager": {
@@ -26,10 +29,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/botpress/botpress-hitl"
+    "url": "https://github.com/istrategylabs/botpress-hitl-lite"
   },
-  "homepage": "https://github.com/botpress/botpress-hitl",
-  "author": "Botpress",
+  "homepage": "https://github.com/istrategylabs/botpress-hitl-lite",
+  "author": "ISL",
   "license": "AGPL-3.0",
   "devDependencies": {
     "botpress": ">= 0.1",
