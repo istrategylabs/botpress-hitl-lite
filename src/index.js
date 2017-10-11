@@ -23,7 +23,6 @@ const incomingMiddleware = (event, next) => {
     if ((!!session.paused || config.paused) && _.includes(['text', 'message'], event.type)) {
       event.bp.logger.debug('[hitl] Session paused, message swallowed:', event.text)
       // the session or bot is paused, swallow the message
-      return
     } else {
       next()
     }
@@ -35,7 +34,6 @@ const outgoingMiddleware = (event, next) => {
 
   return db.getUserSession(event)
   .then(session => {
-
     if (session.is_new_session) {
       event.bp.events.emit('hitl.session', session)
     }
@@ -52,7 +50,6 @@ module.exports = {
   },
 
   init: async (bp, configurator) => {
-
     checkVersion(bp, __dirname)
 
     bp.middlewares.register({
@@ -80,8 +77,7 @@ module.exports = {
     .then(() => db.initialize())
   },
 
-  ready: function(bp) {
-
+  ready: function (bp) {
     bp.hitl = {
       pause: (platform, userId) => {
         return db.setSessionPaused(true, platform, userId, 'code')
@@ -105,10 +101,9 @@ module.exports = {
     const router = bp.getRouter('botpress-hitl')
 
     router.get('/sessions', (req, res) => {
-      db.getAllSessions(req.query.onlyPaused === "true")
+      db.getAllSessions(req.query.onlyPaused === 'true')
       .then(sessions => res.send(sessions))
     })
-
 
     // TODO post /sessions/:id/typing
 

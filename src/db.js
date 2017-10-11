@@ -5,7 +5,7 @@ import { DatabaseHelpers as helpers } from 'botpress'
 
 var knex = null
 
-function initialize() {
+function initialize () {
   if (!knex) {
     throw new Error('you must initialize the database before')
   }
@@ -23,7 +23,7 @@ function initialize() {
   })
 }
 
-function createUserSession(event) {
+function createUserSession (event) {
   let profileUrl = null
   let full_name = '#' + Math.random().toString().substr(2)
 
@@ -53,7 +53,7 @@ function createUserSession(event) {
   .then(db_session => Object.assign({}, session, db_session))
 }
 
-function getUserSession(event) {
+function getUserSession (event) {
   const userId = (event.user && event.user.id) || event.raw.to
   return knex('hitl_sessions')
   .where({ platform: event.platform, userId: userId })
@@ -68,7 +68,7 @@ function getUserSession(event) {
   })
 }
 
-function getSession(sessionId) {
+function getSession (sessionId) {
   return knex('hitl_sessions')
   .where({ id: sessionId })
   .select('*')
@@ -82,14 +82,14 @@ function getSession(sessionId) {
   })
 }
 
-function toPlainObject(object) {
+function toPlainObject (object) {
   // trims SQL queries from objects
   return _.mapValues(object, v => {
     return v.sql ? v.sql : v
   })
 }
 
-function setSessionPaused(paused, platform, userId, trigger, sessionId = null) {
+function setSessionPaused (paused, platform, userId, trigger, sessionId = null) {
   if (sessionId) {
     return knex('hitl_sessions')
     .where({ id: sessionId })
@@ -108,7 +108,7 @@ function setSessionPaused(paused, platform, userId, trigger, sessionId = null) {
   }
 }
 
-function isSessionPaused(platform, userId, sessionId = null) {
+function isSessionPaused (platform, userId, sessionId = null) {
   const toBool = s => helpers(knex).bool.parse(s)
 
   if (sessionId) {
@@ -122,7 +122,7 @@ function isSessionPaused(platform, userId, sessionId = null) {
   }
 }
 
-function getAllSessions(onlyPaused) {
+function getAllSessions (onlyPaused) {
   let condition = ''
 
   if (onlyPaused === true) {

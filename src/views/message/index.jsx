@@ -12,48 +12,44 @@ import _ from 'lodash'
 import ReactAudioPlayer from 'react-audio-player'
 
 export default class Message extends React.Component {
-
-  constructor() {
+  constructor () {
     super()
   }
 
-  renderText() {
+  renderText () {
     return <p>{this.props.content.text}</p>
   }
 
-  renderImage() {
-    return <img src={this.props.content.text}/>
+  renderImage () {
+    return <img src={this.props.content.text} />
   }
 
-  renderVideo() {
+  renderVideo () {
     return <video controls>
-      <source src={this.props.content.text} type="video/mp4" />
+      <source src={this.props.content.text} type='video/mp4' />
     </video>
   }
 
-  renderAudio() {
+  renderAudio () {
     return <ReactAudioPlayer className={style.audio} src={this.props.content.text} />
   }
 
-  renderContent() {
+  renderContent () {
     const type = this.props.content.type
 
-    if (type === "message" || type === "text") {
+    if (type === 'message' || type === 'text') {
       return this.renderText()
-    }
-    else if (type === "image") {
+    } else if (type === 'image') {
       return this.renderImage()
-    }
-    else if (type === "video") {
+    } else if (type === 'video') {
       return this.renderVideo()
-    }
-    else if (type === "audio") {
+    } else if (type === 'audio') {
       return this.renderAudio()
     }
-    return null;
+    return null
   }
 
-  renderMessageFromUser() {
+  renderMessageFromUser () {
     return (
       <div className={style.message + ' ' + style.fromUser}>
         {this.renderContent()}
@@ -61,7 +57,7 @@ export default class Message extends React.Component {
     )
   }
 
-  renderMessageFromBot() {
+  renderMessageFromBot () {
     return (
       <div className={style.message + ' ' + style.fromBot}>
         {this.renderContent()}
@@ -69,32 +65,31 @@ export default class Message extends React.Component {
     )
   }
 
-  renderMessage() {
+  renderMessage () {
     const date = moment(this.props.content.ts).format('DD MMM YYYY [at] LT')
 
     const tooltip = (
-      <Tooltip id="tooltip">{date}</Tooltip>
+      <Tooltip id='tooltip'>{date}</Tooltip>
     )
 
-    if(this.props.content.direction === 'in') {
-      return <OverlayTrigger placement="right" overlay={tooltip}>
+    if (this.props.content.direction === 'in') {
+      return <OverlayTrigger placement='right' overlay={tooltip}>
         {this.renderMessageFromUser()}
       </OverlayTrigger>
     }
 
-    return <OverlayTrigger placement="left" overlay={tooltip}>
+    return <OverlayTrigger placement='left' overlay={tooltip}>
       {this.renderMessageFromBot()}
     </OverlayTrigger>
-
   }
 
-  render() {
+  render () {
     const renderedTypes = [
-      "text",
-      "message",
-      "image",
-      "video",
-      "audio"
+      'text',
+      'message',
+      'image',
+      'video',
+      'audio'
     ]
 
     if (!_.includes(renderedTypes, this.props.content.type)) {
