@@ -4,9 +4,6 @@ import _ from 'lodash'
 import path from 'path'
 import fs from 'fs'
 
-// TODO: Cleanup old sessions
-// TODO: If messages count > X, delete some
-
 let db = null
 let config = null
 
@@ -23,17 +20,13 @@ const incomingMiddleware = (event, next) => {
       event.bp.events.emit('hitl.session', session)
     }
 
-    return db.appendMessageToSession(event, session.id, 'in')
-    .then(message => {
-      event.bp.events.emit('hitl.message', message)
-      if ((!!session.paused || config.paused) && _.includes(['text', 'message'], event.type)) {
-        event.bp.logger.debug('[hitl] Session paused, message swallowed:', event.text)
-        // the session or bot is paused, swallow the message
-        return
-      } else {
-        next()
-      }
-    })
+    if ((!!session.paused || config.paused) && _.includes(['text', 'message'], event.type)) {
+      event.bp.logger.debug('[hitl] Session paused, message swallowed:', event.text)
+      // the session or bot is paused, swallow the message
+      return
+    } else {
+      next()
+    }
   })
 }
 
@@ -47,11 +40,7 @@ const outgoingMiddleware = (event, next) => {
       event.bp.events.emit('hitl.session', session)
     }
 
-    return db.appendMessageToSession(event, session.id, 'out')
-    .then(message => {
-      event.bp.events.emit('hitl.message', message)
-      next()
-    })
+    next()
   })
 }
 
@@ -63,7 +52,7 @@ module.exports = {
   },
 
   init: async (bp, configurator) => {
-    
+
     checkVersion(bp, __dirname)
 
     bp.middlewares.register({
@@ -120,31 +109,9 @@ module.exports = {
       .then(sessions => res.send(sessions))
     })
 
-    router.get('/sessions/:sessionId', (req, res) => {
-      db.getSessionData(req.params.sessionId)
-      .then(messages => res.send(messages))
-    })
-
-    router.post('/sessions/:sessionId/message', (req, res) => {
-      const { message } = req.body
-
-      db.getSession(req.params.sessionId)
-      .then(session => {
-        const event = {
-          type: 'text',
-          platform: session.platform,
-          raw: { to: session.userId, message: message },
-          text: message
-        }
-
-        bp.middlewares.sendOutgoing(event)
-
-        res.sendStatus(200)
-      })
-    })
 
     // TODO post /sessions/:id/typing
-    
+
     router.post('/sessions/:sessionId/pause', (req, res) => {
       db.setSessionPaused(true, null, null, 'operator', req.params.sessionId)
       .then(sessionId => {

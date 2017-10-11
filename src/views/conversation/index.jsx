@@ -16,7 +16,6 @@ export default class Conversation extends React.Component {
     super()
 
     this.state = { loading: true, messages: null }
-    this.appendMessage = ::this.appendMessage
   }
 
   scrollToBottom() {
@@ -27,18 +26,9 @@ export default class Conversation extends React.Component {
   }
 
   componentDidMount() {
-    this.props.bp.events.on('hitl.message', this.appendMessage)
   }
 
   componentWillUnmount() {
-    this.props.bp.events.off('hitl.message', this.appendMessage)
-  }
-
-  appendMessage(message) {
-    if (this.state.messages && this.props.data && this.props.data.id === message.session_id) {
-      this.setState({ messages: [...this.state.messages, message] })
-      setTimeout(::this.scrollToBottom, 50)
-    }
   }
 
   togglePaused() {
@@ -57,24 +47,6 @@ export default class Conversation extends React.Component {
     if (nextProps.data) {
       newData = nextProps.data
     }
-
-    if (newData && newData.id){
-      this.fetchSessionMessages(newData.id)
-    }
-  }
-
-  fetchSessionMessages(sessionId) {
-    this.setState({ loading: true })
-
-    return this.getAxios().get('/api/botpress-hitl/sessions/' + sessionId)
-    .then(({ data }) => {
-      this.setState({
-        loading: false,
-        messages: data
-      })
-
-      setTimeout(::this.scrollToBottom, 50)
-    })
   }
 
   renderHeader() {
@@ -99,23 +71,6 @@ export default class Conversation extends React.Component {
     )
   }
 
-  renderMessages() {
-    const dynamicHeightStyleInnerMessageDiv = {
-      maxHeight: innerHeight - 210
-    }
-
-    return (
-      <div className={style.innerMessages}
-        id="innerMessages"
-        ref="innerMessages"
-        style={dynamicHeightStyleInnerMessageDiv}>
-        {this.state.messages && this.state.messages.map((m, i) => {
-          return <Message key={i} content={m}/>
-        })}
-      </div>
-    )
-  }
-
 
   render() {
     const dynamicHeightStyleMessageDiv = {
@@ -126,9 +81,6 @@ export default class Conversation extends React.Component {
       <div className={style.conversation}>
         <div className={style.header}>
           {this.props.data ? ::this.renderHeader() : null}
-        </div>
-        <div className={style.messages} style={dynamicHeightStyleMessageDiv}>
-          {this.props.data ? ::this.renderMessages() : null}
         </div>
       </div>
     )
